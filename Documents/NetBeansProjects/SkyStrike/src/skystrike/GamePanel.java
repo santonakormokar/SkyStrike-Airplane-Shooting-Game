@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * GamePanel
  * ---------
- * The rendering + update surface for SkyStrike. Right now it only
+ * The rendering + update surface for SkyStrike. Right now (Step 1) it only
  * owns the scrolling sky background and cloud layer and runs the core game
  * loop. Later steps will add the player, enemies, bullets, HUD, and states
  * on top of this same loop without changing how the loop itself works.
@@ -29,6 +29,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     private final Player player;
     private final List<Enemy> enemies = new ArrayList<>();
+    private final List<Bullet> bullets = new ArrayList<>();
     private int spawnTimer = 0;
     private static final int SPAWN_INTERVAL = 90; // frames between enemy spawns
 
@@ -61,6 +62,20 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void stopGame() {
         running = false;
+    }
+
+    /**
+     * Fires the player's current shoot strategy and adds the resulting bullets.
+     * Left as a plain public method for now — Step 5 (Command pattern) will call
+     * this from a ShootCommand bound to the space bar, instead of GamePanel
+     * needing to know about keyboards itself.
+     */
+    public void playerShoot() {
+        bullets.addAll(player.tryShoot());
+    }
+
+    public Player getPlayer() {
+        return player;
     }
 
     @Override
@@ -113,6 +128,15 @@ public class GamePanel extends JPanel implements Runnable {
                 it.remove();
             }
         }
+
+        Iterator<Bullet> bit = bullets.iterator();
+        while (bit.hasNext()) {
+            Bullet b = bit.next();
+            b.update();
+            if (b.isOffScreen(WIDTH, HEIGHT)) {
+                bit.remove();
+            }
+        }
     }
 
     @Override
@@ -125,6 +149,9 @@ public class GamePanel extends JPanel implements Runnable {
         }
         for (Enemy e : enemies) {
             e.draw(g2);
+        }
+        for (Bullet b : bullets) {
+            b.draw(g2);
         }
         player.draw(g2);
     }
