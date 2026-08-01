@@ -1,19 +1,19 @@
 package skystrike;
 
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
  * GamePanel
  * ---------
- * The rendering + update surface for SkyStrike. Right now (Step 1) it only
- * owns the scrolling sky background and cloud layer and runs the core game
- * loop. Later steps will add the player, enemies, bullets, HUD, and states
- * on top of this same loop without changing how the loop itself works.
+ * The rendering + update surface for SkyStrike. As of Step 6, GamePanel
+ * itself no longer knows what "the game" is doing — it just owns the
+ * always-on background (sky + clouds), runs the fixed-timestep loop, and
+ * forwards update()/draw() to whichever GameState is current. Switching
+ * screens (menu -> playing -> pause -> game over) is entirely the State
+ * pattern's job now; GamePanel has no if/else for "which screen am I on".
  */
 public class GamePanel extends JPanel implements Runnable {
 
@@ -27,18 +27,24 @@ public class GamePanel extends JPanel implements Runnable {
     private final List<Cloud> clouds = new ArrayList<>();
     private float skyScroll = 0f;
 
-    private final Player player;
-    private final List<Enemy> enemies = new ArrayList<>();
-    private final List<Bullet> bullets = new ArrayList<>();
-    private int spawnTimer = 0;
-    private static final int SPAWN_INTERVAL = 90; // frames between enemy spawns
+    private GameState currentState;
+
+    /** Shared clickable region for the pause/resume icon, top-right corner. */
+    public static final Rectangle PAUSE_BUTTON_BOUNDS = new Rectangle(WIDTH - 44, 10, 34, 34);
 
     public GamePanel() {
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
         setFocusable(true);
         setBackground(Color.BLACK);
         spawnClouds();
-        player = new Player(WIDTH / 2f - 24, HEIGHT - 100, WIDTH, HEIGHT);
+        addKeyListener(new KeyInputHandler(this));
+        addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                currentState.handleMouseClick(e.getX(), e.getY());
+            }
+        });
+        currentState = new MenuState(this);
     }
 
     private void spawnClouds() {
@@ -49,6 +55,16 @@ public class GamePanel extends JPanel implements Runnable {
             float speed = 0.6f + (float) (Math.random() * 1.2f);
             clouds.add(new Cloud(x, y, size, speed));
         }
+    }
+
+    /** Switches the active screen/state. Called by states themselves (e.g. MenuState on ENTER). */
+    public void setState(GameState newState) {
+        currentState = newState;
+        currentState.onEnter();
+    }
+
+    public GameState getCurrentState() {
+        return currentState;
     }
 
     /** Starts the background game loop thread. Safe to call once. */
@@ -62,20 +78,6 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void stopGame() {
         running = false;
-    }
-
-    /**
-     * Fires the player's current shoot strategy and adds the resulting bullets.
-     * Left as a plain public method for now — Step 5 (Command pattern) will call
-     * this from a ShootCommand bound to the space bar, instead of GamePanel
-     * needing to know about keyboards itself.
-     */
-    public void playerShoot() {
-        bullets.addAll(player.tryShoot());
-    }
-
-    public Player getPlayer() {
-        return player;
     }
 
     @Override
@@ -103,7 +105,7 @@ public class GamePanel extends JPanel implements Runnable {
         }
     }
 
-    /** Per-frame update: currently just the background scroll and clouds. */
+    /** Background always animates, regardless of which state is active; the state handles its own logic. */
     private void update() {
         skyScroll += 1.5f;
         if (skyScroll >= HEIGHT) {
@@ -112,31 +114,7 @@ public class GamePanel extends JPanel implements Runnable {
         for (Cloud c : clouds) {
             c.update(HEIGHT, WIDTH);
         }
-        player.update();
-
-        spawnTimer++;
-        if (spawnTimer >= SPAWN_INTERVAL) {
-            spawnTimer = 0;
-            enemies.add(EnemyFactory.createEnemy(EnemyFactory.randomRegularType(), WIDTH));
-        }
-
-        Iterator<Enemy> it = enemies.iterator();
-        while (it.hasNext()) {
-            Enemy e = it.next();
-            e.update();
-            if (e.isOffScreen(HEIGHT) || e.isDestroyed()) {
-                it.remove();
-            }
-        }
-
-        Iterator<Bullet> bit = bullets.iterator();
-        while (bit.hasNext()) {
-            Bullet b = bit.next();
-            b.update();
-            if (b.isOffScreen(WIDTH, HEIGHT)) {
-                bit.remove();
-            }
-        }
+        currentState.update();
     }
 
     @Override
@@ -147,13 +125,7 @@ public class GamePanel extends JPanel implements Runnable {
         for (Cloud c : clouds) {
             c.draw(g2);
         }
-        for (Enemy e : enemies) {
-            e.draw(g2);
-        }
-        for (Bullet b : bullets) {
-            b.draw(g2);
-        }
-        player.draw(g2);
+        currentState.draw(g2);
     }
 
     /** Draws two stacked sky-gradient tiles and scrolls them to create a seamless vertical loop. */
