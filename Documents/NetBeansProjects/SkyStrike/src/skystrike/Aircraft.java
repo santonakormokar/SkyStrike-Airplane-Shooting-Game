@@ -12,7 +12,7 @@ import java.awt.Rectangle;
  * by overriding move(). This is the Template Method pattern: the algorithm's
  * shape lives here once; the varying step lives in the subclasses.
  */
-public abstract class Aircraft {
+public abstract class Aircraft implements Damageable {
 
     protected float x, y;
     protected final int width, height;

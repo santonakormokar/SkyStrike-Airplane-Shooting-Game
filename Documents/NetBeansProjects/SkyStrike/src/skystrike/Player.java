@@ -19,7 +19,6 @@ public class Player extends Aircraft {
 
     private ShootStrategy shootStrategy = new SingleShotStrategy();
     private int shootCooldown = 0;
-    private static final int SHOOT_COOLDOWN_FRAMES = 12;
 
     public Player(float x, float y, int panelWidth, int panelHeight) {
         super(x, y, 48, 48, 5f, 3);
@@ -31,13 +30,12 @@ public class Player extends Aircraft {
     public void setShootStrategy(ShootStrategy strategy) { this.shootStrategy = strategy; }
     public ShootStrategy getShootStrategy() { return shootStrategy; }
 
-    /** Returns newly fired bullets if off cooldown, otherwise an empty list. Call once per frame. */
+    /** Returns newly fired bullets if off cooldown, otherwise an empty list. Safe to call as often as input arrives. */
     public java.util.List<Bullet> tryShoot() {
         if (shootCooldown > 0) {
-            shootCooldown--;
             return java.util.Collections.emptyList();
         }
-        shootCooldown = SHOOT_COOLDOWN_FRAMES;
+        shootCooldown = shootStrategy.getCooldownFrames();
         return shootStrategy.shoot(x, y, width);
     }
 
@@ -58,6 +56,21 @@ public class Player extends Aircraft {
         if (y < 0) y = 0;
         if (x + width > panelWidth) x = panelWidth - width;
         if (y + height > panelHeight) y = panelHeight - height;
+    }
+
+    /**
+     * Ticks the shoot cooldown down once per real game frame (this runs every
+     * frame regardless of whether the player is shooting, since it's called
+     * from Aircraft's update() template method via move() -> onAfterMove()).
+     * Previously the cooldown only decremented inside tryShoot(), so it only
+     * ticked down when you tried to shoot again — meaning waiting longer
+     * between shots didn't actually help. This fixes that.
+     */
+    @Override
+    protected void onAfterMove() {
+        if (shootCooldown > 0) {
+            shootCooldown--;
+        }
     }
 
     @Override

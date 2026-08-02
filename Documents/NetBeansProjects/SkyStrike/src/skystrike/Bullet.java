@@ -53,4 +53,9 @@ public class Bullet {
 
     public int getDamage() { return damage; }
     public boolean isFromPlayer() { return fromPlayer; }
+
+    /** Returns a copy of this bullet with a different damage value. Used by DoubleDamageDecorator. */
+    public Bullet withDamage(int newDamage) {
+        return new Bullet(x, y, dx, dy, width, height, newDamage, fromPlayer);
+    }
 }

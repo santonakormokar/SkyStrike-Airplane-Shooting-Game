@@ -24,11 +24,37 @@ public class PlayingState implements GameState {
     private final List<Bullet> bullets = new ArrayList<>();
     private int spawnTimer = 0;
     private static final int SPAWN_INTERVAL = 90;
+    private final HUD hud = new HUD();
+
+    /**
+     * What Step 9's collision code will actually call takeDamage() on.
+     * Normally this is just `player` itself; activateShield() swaps it
+     * for a ShieldDecorator wrapping the player, so hits get absorbed
+     * without collision code needing to know a shield is active.
+     */
+    private Damageable playerDamageHandler;
 
     public PlayingState(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
         GameManager.getInstance().reset();
         player = new Player(GamePanel.WIDTH / 2f - 24, GamePanel.HEIGHT - 100, GamePanel.WIDTH, GamePanel.HEIGHT);
+        playerDamageHandler = player;
+        GameManager.getInstance().addObserver(hud);
+    }
+
+    /** Power-up: wraps the player in a ShieldDecorator that absorbs the next `hits` hits. */
+    public void activateShield(int hits) {
+        playerDamageHandler = new ShieldDecorator(player, hits);
+    }
+
+    /** Power-up: wraps the player's current strategy so it fires faster. Stacks with other decorators. */
+    public void activateRapidFire() {
+        player.setShootStrategy(new RapidFireDecorator(player.getShootStrategy()));
+    }
+
+    /** Power-up: wraps the player's current strategy so its bullets deal double damage. Stacks. */
+    public void activateDoubleDamage() {
+        player.setShootStrategy(new DoubleDamageDecorator(player.getShootStrategy()));
     }
 
     @Override
@@ -85,6 +111,7 @@ public class PlayingState implements GameState {
             b.draw(g);
         }
         player.draw(g);
+        hud.draw(g);
         drawPauseButton(g);
     }
 
