@@ -5,11 +5,6 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 
-/**
- * Shown when the player defeats the boss. Not yet reachable in gameplay —
- * nothing triggers it until Step 9 wires up collision detection and boss
- * death. The state itself is fully built and ready for that hookup.
- */
 public class VictoryState implements GameState {
 
     private final GamePanel gamePanel;
