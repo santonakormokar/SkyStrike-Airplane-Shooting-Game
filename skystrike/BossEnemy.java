@@ -1,12 +1,6 @@
 package skystrike;
 
 import java.awt.Color;
-
-/**
- * Boss enemy: high health, worth 200 coins. Overrides move() with its own
- * pattern instead of the plain straight-down drift every other Enemy uses —
- * it descends to a hover line, then sweeps side to side.
- */
 public class BossEnemy extends Enemy {
 
     private final int panelWidth;
