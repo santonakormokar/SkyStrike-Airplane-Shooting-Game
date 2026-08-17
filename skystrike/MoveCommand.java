@@ -1,13 +1,5 @@
 package skystrike;
 
-/**
- * MoveCommand
- * -----------
- * A Command that sets one of Player's directional flags on or off.
- * "active" is true on key-down and false on key-up, so holding an
- * arrow key keeps moving and releasing it stops — without Player ever
- * touching a KeyEvent.
- */
 public class MoveCommand implements Command {
 
     public enum Direction { LEFT, RIGHT, UP, DOWN }
