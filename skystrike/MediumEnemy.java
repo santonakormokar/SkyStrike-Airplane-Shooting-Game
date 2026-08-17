@@ -2,7 +2,6 @@ package skystrike;
 
 import java.awt.Color;
 
-/** Mid-tier enemy: 2 hits to kill, moderate speed, worth 20 coins. */
 public class MediumEnemy extends Enemy {
 
     public MediumEnemy(float x, float y) {
