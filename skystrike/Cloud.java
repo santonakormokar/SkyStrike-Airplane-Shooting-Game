@@ -3,11 +3,6 @@ package skystrike;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-/**
- * A single decorative cloud used by the scrolling sky background.
- * Plain data + draw logic — no game-state knowledge, so it can be
- * reused by menu, playing, and game-over backgrounds alike.
- */
 public class Cloud {
 
     private float x, y;
@@ -21,7 +16,6 @@ public class Cloud {
         this.speed = speed;
     }
 
-    /** Moves the cloud downward each frame and wraps it back to the top when it exits the screen. */
     public void update(int panelHeight, int panelWidth) {
         y += speed;
         if (y - size > panelHeight) {
