@@ -3,7 +3,6 @@ package skystrike;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Fires two parallel bullets, one from each side of center. */
 public class DoubleShotStrategy implements ShootStrategy {
 
     @Override
