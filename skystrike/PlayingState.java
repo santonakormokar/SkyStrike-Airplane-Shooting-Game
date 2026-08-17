@@ -8,14 +8,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-/**
- * PlayingState
- * ------------
- * The actual gameplay. Owns the player, enemy list, and bullet list.
- * Pausing is now triggered by clicking the pause icon in the top-right
- * corner (handleMouseClick) instead of a keyboard key — see the icon
- * drawn at the end of draw().
- */
 public class PlayingState implements GameState {
 
     private final GamePanel gamePanel;
@@ -66,11 +58,6 @@ public class PlayingState implements GameState {
                 bit.remove();
             }
         }
-
-        // Collision detection (bullets vs enemies, enemies vs player) is
-        // added in Step 9. For now GameManager.isPlayerDead() is never
-        // actually true yet — this check is here so GameOverState wiring
-        // is already correct once damage starts happening.
         if (GameManager.getInstance().isPlayerDead()) {
             gamePanel.setState(new GameOverState(gamePanel));
         }
