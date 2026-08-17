@@ -3,15 +3,6 @@ package skystrike;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-
-/**
- * Heart
- * -----
- * A falling pickup, same pattern as Coin — the player flies into it to
- * collect. Refills exactly one lost heart via GameManager.healPlayer(1).
- * Replaces the earlier time-based passive regen: health now only comes
- * back by actually catching one of these, same as coins.
- */
 public class Heart {
 
     private float x, y;
