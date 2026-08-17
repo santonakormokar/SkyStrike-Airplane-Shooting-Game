@@ -6,13 +6,6 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
-/**
- * Coin
- * ----
- * A falling pickup. Unlike enemies, coins don't fight back — the player
- * just has to fly into one to collect it. Coins award coins only; score
- * comes exclusively from destroying enemies (see PlayingState.onEnemyDestroyed).
- */
 public class Coin {
 
     private float x, y;
@@ -42,8 +35,6 @@ public class Coin {
     public int getValue() {
         return VALUE;
     }
-
-    /** Marks this coin as picked up, so it's removed instead of continuing to fall. */
     public void collect() { collected = true; }
     public boolean isCollected() { return collected; }
 
