@@ -5,16 +5,6 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * GamePanel
- * ---------
- * The rendering + update surface for SkyStrike. As of Step 6, GamePanel
- * itself no longer knows what "the game" is doing — it just owns the
- * always-on background (sky + clouds), runs the fixed-timestep loop, and
- * forwards update()/draw() to whichever GameState is current. Switching
- * screens (menu -> playing -> pause -> game over) is entirely the State
- * pattern's job now; GamePanel has no if/else for "which screen am I on".
- */
 public class GamePanel extends JPanel implements Runnable {
 
     public static final int WIDTH = 480;
@@ -29,7 +19,6 @@ public class GamePanel extends JPanel implements Runnable {
 
     private GameState currentState;
 
-    /** Shared clickable region for the pause/resume icon, top-right corner. */
     public static final Rectangle PAUSE_BUTTON_BOUNDS = new Rectangle(WIDTH - 44, 10, 34, 34);
 
     public GamePanel() {
@@ -57,7 +46,6 @@ public class GamePanel extends JPanel implements Runnable {
         }
     }
 
-    /** Switches the active screen/state. Called by states themselves (e.g. MenuState on ENTER). */
     public void setState(GameState newState) {
         currentState = newState;
         currentState.onEnter();
@@ -104,8 +92,6 @@ public class GamePanel extends JPanel implements Runnable {
             }
         }
     }
-
-    /** Background always animates, regardless of which state is active; the state handles its own logic. */
     private void update() {
         skyScroll += 1.5f;
         if (skyScroll >= HEIGHT) {
@@ -128,7 +114,6 @@ public class GamePanel extends JPanel implements Runnable {
         currentState.draw(g2);
     }
 
-    /** Draws two stacked sky-gradient tiles and scrolls them to create a seamless vertical loop. */
     private void drawScrollingSky(Graphics2D g2) {
         GradientPaint sky = new GradientPaint(
                 0, 0, new Color(70, 140, 220),
