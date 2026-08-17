@@ -3,13 +3,6 @@ package skystrike;
 
 import javax.swing.*;
  
-/**
- * Main
- * ----
- * Application entry point. Builds the window, drops in the GamePanel,
- * and starts the game loop. Kept intentionally thin — all game logic
- * lives in GamePanel and the manager/state/etc. classes, not here.
- */
 public class SkyStrike {
 
    
