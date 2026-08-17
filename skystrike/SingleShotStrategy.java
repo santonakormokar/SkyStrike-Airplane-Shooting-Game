@@ -3,7 +3,6 @@ package skystrike;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Default strategy: one bullet straight up the center. */
 public class SingleShotStrategy implements ShootStrategy {
 
     @Override
