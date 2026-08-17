@@ -5,7 +5,6 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 
-/** Title screen. Press ENTER to start a new game. */
 public class MenuState implements GameState {
 
     private final GamePanel gamePanel;
