@@ -3,7 +3,6 @@ package skystrike;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Fires a straight center bullet plus two angled slightly outward. */
 public class TripleShotStrategy implements ShootStrategy {
 
     @Override
