@@ -2,7 +2,6 @@ package skystrike;
 
 import java.awt.Color;
 
-/** Weakest enemy: 1 hit to kill, fastest descent, worth 10 coins. */
 public class EasyEnemy extends Enemy {
 
     public EasyEnemy(float x, float y) {
