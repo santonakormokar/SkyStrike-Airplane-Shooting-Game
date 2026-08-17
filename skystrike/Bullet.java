@@ -3,17 +3,6 @@ package skystrike;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-
-/**
- * Bullet
- * ------
- * A simple projectile: position + constant velocity (dx, dy), a damage
- * value, and a flag for who fired it (so player bullets don't hurt the
- * player and enemy bullets don't hurt enemies once collision is wired up
- * in a later step). The various ShootStrategy implementations decide how
- * many of these to create and at what angles/speeds — Bullet itself has
- * no idea which strategy made it.
- */
 public class Bullet {
 
     private float x, y;
