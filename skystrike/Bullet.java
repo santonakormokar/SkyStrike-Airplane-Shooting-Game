@@ -21,7 +21,6 @@ public class Bullet {
     private final int width, height;
     private final int damage;
     private final boolean fromPlayer;
-    private boolean consumed = false;
 
     public Bullet(float x, float y, float dx, float dy, int width, int height, int damage, boolean fromPlayer) {
         this.x = x;
@@ -54,13 +53,4 @@ public class Bullet {
 
     public int getDamage() { return damage; }
     public boolean isFromPlayer() { return fromPlayer; }
-
-    /** Marks this bullet as having hit something, so it's removed instead of continuing to travel. */
-    public void consume() { consumed = true; }
-    public boolean isConsumed() { return consumed; }
-
-    /** Returns a copy of this bullet with a different damage value. Used by DoubleDamageDecorator. */
-    public Bullet withDamage(int newDamage) {
-        return new Bullet(x, y, dx, dy, width, height, newDamage, fromPlayer);
-    }
 }

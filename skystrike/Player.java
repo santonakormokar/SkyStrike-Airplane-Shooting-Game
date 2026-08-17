@@ -19,6 +19,7 @@ public class Player extends Aircraft {
 
     private ShootStrategy shootStrategy = new SingleShotStrategy();
     private int shootCooldown = 0;
+    private static final int SHOOT_COOLDOWN_FRAMES = 12;
 
     public Player(float x, float y, int panelWidth, int panelHeight) {
         super(x, y, 48, 48, 5f, 3);
@@ -30,12 +31,13 @@ public class Player extends Aircraft {
     public void setShootStrategy(ShootStrategy strategy) { this.shootStrategy = strategy; }
     public ShootStrategy getShootStrategy() { return shootStrategy; }
 
-    /** Returns newly fired bullets if off cooldown, otherwise an empty list. Safe to call as often as input arrives. */
+    /** Returns newly fired bullets if off cooldown, otherwise an empty list. Call once per frame. */
     public java.util.List<Bullet> tryShoot() {
         if (shootCooldown > 0) {
+            shootCooldown--;
             return java.util.Collections.emptyList();
         }
-        shootCooldown = shootStrategy.getCooldownFrames();
+        shootCooldown = SHOOT_COOLDOWN_FRAMES;
         return shootStrategy.shoot(x, y, width);
     }
 
@@ -58,50 +60,19 @@ public class Player extends Aircraft {
         if (y + height > panelHeight) y = panelHeight - height;
     }
 
-    /**
-     * Ticks the shoot cooldown down once per real game frame (this runs every
-     * frame regardless of whether the player is shooting, since it's called
-     * from Aircraft's update() template method via move() -> onAfterMove()).
-     * Previously the cooldown only decremented inside tryShoot(), so it only
-     * ticked down when you tried to shoot again — meaning waiting longer
-     * between shots didn't actually help. This fixes that.
-     */
-    @Override
-    protected void onAfterMove() {
-        if (shootCooldown > 0) {
-            shootCooldown--;
-        }
-    }
-
     @Override
     public void draw(Graphics2D g) {
-        java.awt.geom.Path2D.Float body = new java.awt.geom.Path2D.Float();
-        float cx = x + width / 2f;
+        g.setColor(new Color(230, 60, 60));
+        g.fillRoundRect(Math.round(x), Math.round(y), width, height, 12, 12);
 
-        // Nose-up plane silhouette: nose tip, swept wings, tail fins — mirror of Enemy's shape.
-        body.moveTo(cx, y);
-        body.lineTo(cx - width * 0.12f, y + height * 0.25f);
-        body.lineTo(cx - width * 0.50f, y + height * 0.55f);
-        body.lineTo(cx - width * 0.18f, y + height * 0.55f);
-        body.lineTo(cx - width * 0.22f, y + height * 0.85f);
-        body.lineTo(cx - width * 0.40f, y + height);
-        body.lineTo(cx, y + height * 0.88f);
-        body.lineTo(cx + width * 0.40f, y + height);
-        body.lineTo(cx + width * 0.22f, y + height * 0.85f);
-        body.lineTo(cx + width * 0.18f, y + height * 0.55f);
-        body.lineTo(cx + width * 0.50f, y + height * 0.55f);
-        body.lineTo(cx + width * 0.12f, y + height * 0.25f);
-        body.closePath();
-
-        Color bodyColor = new Color(220, 55, 55);
-        g.setColor(bodyColor);
-        g.fill(body);
-        g.setColor(bodyColor.darker());
-        g.draw(body);
-
-        // Cockpit
-        g.setColor(new Color(180, 225, 255, 210));
-        int cockpitSize = Math.max(5, width / 6);
-        g.fillOval(Math.round(cx - cockpitSize / 2f), Math.round(y + height * 0.28f), cockpitSize, cockpitSize);
+        g.setColor(Color.WHITE);
+        int cx = Math.round(x + width / 2f);
+        int nose = Math.round(y);
+        int wingY = Math.round(y + height * 0.4f);
+        g.fillPolygon(
+                new int[]{cx, Math.round(x + width * 0.15f), Math.round(x + width * 0.85f)},
+                new int[]{nose, wingY, wingY},
+                3
+        );
     }
 }

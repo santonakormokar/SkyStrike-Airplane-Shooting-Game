@@ -34,10 +34,4 @@ public class BossEnemy extends Enemy {
     protected Color bodyColor() {
         return new Color(120, 30, 150);
     }
-
-    /** The boss fires far more often than regular enemies. */
-    @Override
-    protected int getShootIntervalFrames() {
-        return 45;
-    }
 }

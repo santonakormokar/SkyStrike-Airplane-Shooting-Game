@@ -12,7 +12,7 @@ import java.awt.Rectangle;
  * by overriding move(). This is the Template Method pattern: the algorithm's
  * shape lives here once; the varying step lives in the subclasses.
  */
-public abstract class Aircraft implements Damageable {
+public abstract class Aircraft {
 
     protected float x, y;
     protected final int width, height;
@@ -66,9 +66,4 @@ public abstract class Aircraft implements Damageable {
     public int getHeight() { return height; }
     public int getHealth() { return health; }
     public int getMaxHealth() { return maxHealth; }
-
-    /** Scales this aircraft's movement speed. Used by PlayingState to make enemies faster as the level ramps up. */
-    public void multiplySpeed(float factor) {
-        speed *= factor;
-    }
 }

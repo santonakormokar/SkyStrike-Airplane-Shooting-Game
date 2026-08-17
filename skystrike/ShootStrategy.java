@@ -20,9 +20,4 @@ public interface ShootStrategy {
      * @return the bullets fired this call
      */
     List<Bullet> shoot(float originX, float originY, int originWidth);
-
-    /** Frames between shots. Default matches the original fixed cooldown Player used before Step 8. */
-    default int getCooldownFrames() {
-        return 12;
-    }
 }

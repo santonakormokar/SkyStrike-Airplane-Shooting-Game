@@ -53,4 +53,4 @@ public class EnemyFactory {
         if (roll < 85) return EnemyType.MEDIUM;
         return EnemyType.HARD;
     }
-}
+} 

@@ -8,27 +8,21 @@ import java.util.List;
 /**
  * GamePanel
  * ---------
- * The rendering + update surface for SkyStrike. Owns the always-on
- * background (sky + clouds) and forwards update()/draw() to whichever
- * GameState is current.
- *
- * The game loop uses a javax.swing.Timer instead of a separate Thread.
- * Earlier versions ran update() on a background thread while Swing
- * painted on the Event Dispatch Thread (EDT) — once Step 9 started
- * adding/removing several list items per frame (bullets, enemies,
- * explosions), that became a real ConcurrentModificationException risk:
- * the EDT could be mid-iteration in draw() while the other thread mutated
- * the same list. A Swing Timer fires its callback ON the EDT, so update()
- * and paintComponent() now always run on the same thread, one at a time —
- * this entire bug class is gone by construction, not by careful locking.
+ * The rendering + update surface for SkyStrike. As of Step 6, GamePanel
+ * itself no longer knows what "the game" is doing — it just owns the
+ * always-on background (sky + clouds), runs the fixed-timestep loop, and
+ * forwards update()/draw() to whichever GameState is current. Switching
+ * screens (menu -> playing -> pause -> game over) is entirely the State
+ * pattern's job now; GamePanel has no if/else for "which screen am I on".
  */
-public class GamePanel extends JPanel {
+public class GamePanel extends JPanel implements Runnable {
 
     public static final int WIDTH = 480;
     public static final int HEIGHT = 720;
     private static final int TARGET_FPS = 60;
 
-    private Timer gameTimer;
+    private Thread gameThread;
+    private volatile boolean running = false;
 
     private final List<Cloud> clouds = new ArrayList<>();
     private float skyScroll = 0f;
@@ -73,20 +67,41 @@ public class GamePanel extends JPanel {
         return currentState;
     }
 
-    /** Starts the game loop. Safe to call once. */
+    /** Starts the background game loop thread. Safe to call once. */
     public void startGame() {
-        if (gameTimer == null) {
-            gameTimer = new Timer(1000 / TARGET_FPS, e -> {
-                update();
-                repaint();
-            });
-            gameTimer.start();
+        if (gameThread == null) {
+            running = true;
+            gameThread = new Thread(this, "SkyStrike-GameLoop");
+            gameThread.start();
         }
     }
 
     public void stopGame() {
-        if (gameTimer != null) {
-            gameTimer.stop();
+        running = false;
+    }
+
+    @Override
+    public void run() {
+        final double nsPerFrame = 1_000_000_000.0 / TARGET_FPS;
+        long lastTime = System.nanoTime();
+        double accumulator = 0;
+
+        while (running) {
+            long now = System.nanoTime();
+            accumulator += (now - lastTime) / nsPerFrame;
+            lastTime = now;
+
+            while (accumulator >= 1) {
+                update();
+                accumulator--;
+            }
+            repaint();
+
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException ignored) {
+                Thread.currentThread().interrupt();
+            }
         }
     }
 
