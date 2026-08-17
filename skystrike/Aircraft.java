@@ -3,15 +3,6 @@ package skystrike;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
-/**
- * Aircraft (Template Method)
- * ---------------------------
- * Defines the fixed skeleton every flying entity follows each frame:
- * update() always does "move, then run any after-move hook" — Player and
- * Enemy cannot skip or reorder that, they can only plug in *how* they move
- * by overriding move(). This is the Template Method pattern: the algorithm's
- * shape lives here once; the varying step lives in the subclasses.
- */
 public abstract class Aircraft {
 
     protected float x, y;
@@ -29,23 +20,12 @@ public abstract class Aircraft {
         this.health = maxHealth;
     }
 
-    /**
-     * Template method: the invariant per-frame algorithm. It is final so
-     * subclasses cannot change the sequence — only the steps marked
-     * as hooks below.
-     */
     public final void update() {
         move();
         onAfterMove();
     }
-
-    /** Required step: how this aircraft decides to move this frame. */
     protected abstract void move();
-
-    /** Optional hook: extra per-frame behavior after moving (default: nothing). */
     protected void onAfterMove() { }
-
-    /** Each aircraft type renders itself differently. */
     public abstract void draw(Graphics2D g);
 
     public void takeDamage(int amount) {
