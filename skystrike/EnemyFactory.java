@@ -2,15 +2,6 @@ package skystrike;
 
 import java.util.Random;
 
-/**
- * EnemyFactory (Factory Method)
- * ------------------------------
- * Centralizes "how to build an enemy" in one place. Callers (GamePanel's
- * spawn logic) ask for an EnemyType and get back a ready-to-use Enemy —
- * they never call `new EasyEnemy(...)` etc. directly, so adding a new
- * enemy type later only means adding a case here, not hunting through
- * spawn code scattered across the game.
- */
 public class EnemyFactory {
 
     public enum EnemyType { EASY, MEDIUM, HARD, BOSS }
@@ -45,8 +36,6 @@ public class EnemyFactory {
                 throw new IllegalArgumentException("Unknown enemy type: " + type);
         }
     }
-
-    /** Convenience: picks a random regular (non-boss) type, weighted toward easier enemies. */
     public static EnemyType randomRegularType() {
         int roll = RANDOM.nextInt(100);
         if (roll < 55) return EnemyType.EASY;
