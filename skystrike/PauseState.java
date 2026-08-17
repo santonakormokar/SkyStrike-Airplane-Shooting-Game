@@ -5,15 +5,6 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
-/**
- * PauseState
- * ----------
- * Wraps a specific PlayingState instance without discarding it — update()
- * does nothing (frozen), but draw() still renders the paused gameplay
- * underneath a dark overlay, then "PAUSED" on top. Clicking the resume
- * icon (same top-right spot the pause icon used) hands control straight
- * back to the same PlayingState, so nothing about the run is lost.
- */
 public class PauseState implements GameState {
 
     private final GamePanel gamePanel;
@@ -29,7 +20,7 @@ public class PauseState implements GameState {
 
     @Override
     public void update() {
-        // Frozen on purpose: no player/enemy/bullet updates while paused.
+       
     }
 
     @Override
@@ -48,7 +39,6 @@ public class PauseState implements GameState {
         drawResumeButton(g);
     }
 
-    /** Draws a small play/resume triangle in the same corner the pause icon used. */
     private void drawResumeButton(Graphics2D g) {
         Rectangle b = GamePanel.PAUSE_BUTTON_BOUNDS;
         g.setColor(new Color(255, 255, 255, 200));
