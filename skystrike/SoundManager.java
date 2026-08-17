@@ -5,16 +5,6 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * SoundManager (Singleton)
- * -------------------------
- * Owns all audio playback so sound effects are loaded once and triggered
- * from anywhere (shooting, explosions, coin pickup, victory, etc.)
- * without every class needing its own Clip-handling code.
- *
- * Sound files are expected under resources/sounds/<name>.wav
- * Missing files are skipped silently so the game still runs without audio assets.
- */
 public class SoundManager {
 
     private static SoundManager instance;
@@ -30,7 +20,6 @@ public class SoundManager {
         return instance;
     }
 
-    /** Loads (and caches) a .wav file the first time it is requested. */
     private Clip loadClip(String name) {
         if (clips.containsKey(name)) {
             return clips.get(name);
