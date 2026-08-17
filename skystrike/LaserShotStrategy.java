@@ -2,8 +2,6 @@ package skystrike;
 
 import java.util.ArrayList;
 import java.util.List;
-
-/** Fires a single wide, fast, high-damage beam instead of a small round. */
 public class LaserShotStrategy implements ShootStrategy {
 
     @Override
