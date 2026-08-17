@@ -3,15 +3,6 @@ package skystrike;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-/**
- * Player
- * ------
- * The player-controlled aircraft. Implements Aircraft's move() step with
- * simple directional flags rather than reading the keyboard directly —
- * that keeps Player decoupled from input handling. In Step 5 the Command
- * pattern will call these same setMoving...() setters from key bindings,
- * so nothing here will need to change.
- */
 public class Player extends Aircraft {
 
     private final int panelWidth, panelHeight;
@@ -26,12 +17,9 @@ public class Player extends Aircraft {
         this.panelWidth = panelWidth;
         this.panelHeight = panelHeight;
     }
-
-    /** Swaps the current firing pattern (e.g. from a future power-up) without Player needing to change. */
     public void setShootStrategy(ShootStrategy strategy) { this.shootStrategy = strategy; }
     public ShootStrategy getShootStrategy() { return shootStrategy; }
 
-    /** Returns newly fired bullets if off cooldown, otherwise an empty list. Call once per frame. */
     public java.util.List<Bullet> tryShoot() {
         if (shootCooldown > 0) {
             shootCooldown--;
